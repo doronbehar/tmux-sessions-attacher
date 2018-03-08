@@ -1,10 +1,10 @@
-# SSH Remote Tmux Sessions Manager
+# Tmux Sessions Attacher
 
-This project strives to address a task many tmux users execute regularly and it is attaching to tmux sessions on remote machines - like Virtual Private Servers and other animals.
+This project strives to address a task many tmux users execute regularly and it is attaching to existing tmux sessions on remote / local machines - like Virtual Private Servers and other animals.
 
 ## Installation
 
-- For Arch Linux Users: Install the AUR package: [`ssh-remote-tmux-session`](https://aur.archlinux.org/packages/ssh-remote-tmux-session).
+- For Arch Linux Users: Install the AUR package: [`tmux-session-attacher`](https://aur.archlinux.org/packages/tmux-session-attacher).
 
 - For everyone else: Just put the script in your `$PATH`, you know the drill.
 
@@ -32,13 +32,13 @@ That's all there is to it, host specific options can be set with ssh configurati
 
 ### Running
 
-Basically you can run it either from a command prompt and the script will fork itself or you can put it in a `.desktop` file and run it from your desktop environment. Here is an example [`ssh-remote-tmux-session.desktop`](ssh-remote-tmux-session.desktop):
+Basically you can run it either from a command prompt and the script will fork itself or you can put it in a `.desktop` file and run it from your desktop environment. Here is an example [`tmux-session-attacher.desktop`](tmux-session-attacher.desktop):
 
 ```desktop
 [Desktop Entry]
 Type=Application
 Name=SSH Remote Tmux Session Manager
-Exec=ssh-remote-tmux-session
+Exec=tmux-session-attacher
 Keywords=shell;prompt;commandline;
 Comment=Interactivly choose a Tmux session to attach on configured remote machines
 Icon=utilities-terminal
