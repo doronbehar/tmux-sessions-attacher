@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
 Name=Tmux Session attacher
-Exec=tmux-session-attacher
+Exec=tmux-sessions-attacher
 Keywords=shell;prompt;commandline;
 Comment=Interactivly choose a Tmux session to attach
 Icon=utilities-terminal

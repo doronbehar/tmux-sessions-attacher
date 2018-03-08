@@ -4,9 +4,9 @@ This project strives to address a task many tmux users execute regularly and it 
 
 ## Installation
 
-- For Arch Linux Users: Install the AUR package: [`tmux-session-attacher`](https://aur.archlinux.org/packages/tmux-session-attacher).
+- For Arch Linux Users: Install the AUR package: [`tmux-sessions-attacher`](https://aur.archlinux.org/packages/tmux-sessions-attacher).
 
-- For everyone else: Just put the script in your `$PATH`, you know the drill. It's recommended to add the desktop entry file included in this repository ([`tmux-session-attacher.desktop`](tmux-session-attacher.desktop)) to your applications directory as well. Usually it means putting it in `~/.local/share/applications/` and running `update-desktop-database ~/.local/share/applications` is enough.
+- For everyone else: Just put the script in your `$PATH`, you know the drill. It's recommended to add the desktop entry file included in this repository ([`tmux-sessions-attacher.desktop`](tmux-sessions-attacher.desktop)) to your applications directory as well. Usually it means putting it in `~/.local/share/applications/` and running `update-desktop-database ~/.local/share/applications` is enough.
 
 ## Usage
 
@@ -14,31 +14,22 @@ Basically, the script is pretty simple, it reads a configuration file and search
 
 ### Configuration
 
-The configuration file looks like this:
+The configuration file (usually `~/.config/tmux-sessions-attacher/config.json`) looks like this:
 
-```yml
-general:
-    terminal-emulator: "urxvt" # if not defined, the script will do his job inside the current tty. Configuration can be overridden with `-T|--terminal-emulator no` or `-t|--terminal-emulator string`
-    ssh-options: "" # options to pass to ssh
-    tmux-options: "" # options to pass to tmux
-    
-hosts:
-    - "myvps.vpsprovider.net"
-    - "myhomeserver"
-    - "myraspberrypi"
+```json
 ```
 
 That's all there is to it, host specific options can be set with ssh configuration.
 
 ### Running
 
-Basically you can run it either from a command prompt and the script will fork itself or you can put it in a `.desktop` file and run it from your desktop environment. Here is an example [`tmux-session-attacher.desktop`](tmux-session-attacher.desktop):
+Basically you can run it either from a command prompt and the script will fork itself or you can put it in a `.desktop` file and run it from your desktop environment. Here is an example [`tmux-sessions-attacher.desktop`](tmux-sessions-attacher.desktop):
 
 ```desktop
 [Desktop Entry]
 Type=Application
 Name=SSH Remote Tmux Session Manager
-Exec=tmux-session-attacher
+Exec=tmux-sessions-attacher
 Keywords=shell;prompt;commandline;
 Comment=Interactivly choose a Tmux session to attach on configured remote machines
 Icon=utilities-terminal
