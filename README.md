@@ -6,7 +6,7 @@ This project strives to address a task many tmux users execute regularly and it 
 
 - For Arch Linux Users: Install the AUR package: [`tmux-session-attacher`](https://aur.archlinux.org/packages/tmux-session-attacher).
 
-- For everyone else: Just put the script in your `$PATH`, you know the drill.
+- For everyone else: Just put the script in your `$PATH`, you know the drill. It's recommended to add the desktop entry file included in this repository ([`tmux-session-attacher.desktop`](tmux-session-attacher.desktop)) to your applications directory as well. Usually it means putting it in `~/.local/share/applications/` and running `update-desktop-database ~/.local/share/applications` is enough.
 
 ## Usage
 
