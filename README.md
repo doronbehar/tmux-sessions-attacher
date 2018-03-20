@@ -14,12 +14,17 @@ Basically, the script is pretty simple, it reads a configuration file and search
 
 ### Configuration
 
-The configuration file (usually `~/.config/tmux-sessions-attacher/config.json`) looks like this:
+The configuration files are located (usually) at `~/.config/tmux-sessions-attacher/`. Each configuration defines a `{HOST}` with simple `variable = value` syntax. For example, the host myvps would be configured in `~/.config/tmux-sessions-attacher/myvps` just like that:
 
-```json
+```sh
+TERMINAL_EMULATOR="urxvt -e"
+SSH_OPTIONS="-4"
+TMUX_OPTIONS=""
 ```
 
-That's all there is to it, host specific options can be set with ssh configuration.
+The variables in the examples are the only one which will be checked by the script.
+
+Default values for the above options can be defined in environmental variables. Create empty files to specify hosts which use the default configuration.
 
 ### Running
 
