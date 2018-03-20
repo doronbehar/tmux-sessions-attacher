@@ -1,0 +1,50 @@
+#!/bin/sh
+
+CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}"/tmux-sessions-attacher
+TMUX_BIN="${TMUX_BIN:-tmux}"
+SSH_BIN="${SSH_BIN:-ssh -t}"
+IFS=$'\n'
+
+set -e
+
+try2attach(){
+	if [[ "$1" == 'localhost' ]]; then
+		TMUX_CMD="${TMUX_BIN}"' '${TMUX_OPTIONS}
+	else
+		TMUX_CMD="${SSH_BIN}"' '${SSH_OPTIONS}' '$1' '${TMUX_BIN}' '${TMUX_OPTIONS}
+	fi
+	number_of_sessions="$(eval $TMUX_CMD list-sessions -F \'#{session_name}\' | wc -l)"
+	if [[ ${number_of_sessions} -eq 0 ]]; then
+		printf "Press any key to close this window." >&2
+		read -r -p "" response
+		exit 2
+	else
+		if [[ ${number_of_sessions} == 1 ]]; then
+			eval $TMUX_CMD attach-session -t "$(eval $TMUX_CMD list-sessions -F \'#{session_name}\')"
+			exit 0
+		fi
+		echo These are the sessions active on this machine, choose the session you would like to attach
+		eval $TMUX_CMD list-sessions -F \'id:\ \#{session_id} \|\ name:\ \#{session_name} \|\ windows:\ \#{session_windows} \|\ created:\ \#{t:session_created} \|\ last attached:\ \#{t:sessions_last_attached}\'
+		read -r -p "Session id/name: " response
+		eval $TMUX_CMD attach-session -t ${response}
+		exit 0
+		while [[ $? -eq 1 ]]; do
+			read -r -p "Would you like to choose another one? [y/N] " response
+			if [[ ${response} == [yY] ]]; then
+				read -r -p "Session id/name: " response
+				eval $TMUX_CMD attach-session -t ${response}
+				exit 0
+			else
+				exit 1
+			fi
+		done
+	fi
+}
+
+cd $CONFIG_DIR
+
+try2attach localhost
+
+for i in *; do
+	try2attach $i
+done
