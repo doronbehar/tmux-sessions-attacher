@@ -65,9 +65,6 @@ try2attach(){
 		printf "Press any key to close this window." >&2
 		read -r -p "" response
 	fi
-	if [[ ${number_of_sessions} == 1 ]]; then
-		attach $1 "$(list $1 -F \'#{session_name}\')"
-	fi
 	echo These are the sessions active on this machine, choose the session you would like to attach
 	list $1 -F \'id: \#\{session_id\} \| name: \#{session_name} \| windows: \#{session_windows} \| created: \#{t:session_created} \| last attached: \#{t:session_last_attached}\'
 	read -r -p "Session id/name: (Enter nothing to cancel) " response
