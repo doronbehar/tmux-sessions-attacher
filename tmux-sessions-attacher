@@ -57,7 +57,6 @@ attach(){
 			fi
 		fi
 	fi
-	exit 0
 }
 
 try2attach(){
@@ -65,7 +64,6 @@ try2attach(){
 	if [[ ${number_of_sessions} -eq 0 ]]; then
 		printf "Press any key to close this window." >&2
 		read -r -p "" response
-		exit 2
 	fi
 	if [[ ${number_of_sessions} == 1 ]]; then
 		attach $1 "$(list $1 -F \'#{session_name}\')"
@@ -73,21 +71,9 @@ try2attach(){
 	echo These are the sessions active on this machine, choose the session you would like to attach
 	list $1 -F \'id: \#\{session_id\} \| name: \#{session_name} \| windows: \#{session_windows} \| created: \#{t:session_created} \| last attached: \#{t:session_last_attached}\'
 	read -r -p "Session id/name: (Enter nothing to cancel) " response
-	if [[ -z ${response} ]]; then
-		exit 3
-	else
+	if [[ ! -z ${response} ]]; then
 		attach $1 ${response}
 	fi
-	exit 0
-	while [[ $? -eq 1 ]]; do
-		read -r -p "Would you like to choose another one? [y/N] " response
-		if [[ ${response} == [yY] ]]; then
-			read -r -p "Session id/name: " response
-			attach $1 ${response}
-		else
-			exit 1
-		fi
-	done
 }
 
 set -e
@@ -96,3 +82,5 @@ for i in *; do
 	echo Trying to attach host: $i
 	try2attach $i
 done
+
+exit 2
