@@ -59,7 +59,10 @@ attach(){
 	fi
 }
 
-try2attach(){
+set -e
+cd $CONFIG_DIR
+for i in *; do
+	echo Trying to attach host: $i
 	number_of_sessions="$(list $1 -F \'#{session_name}\' | wc -l)"
 	if [[ ${number_of_sessions} -eq 0 ]]; then
 		printf "Press any key to close this window." >&2
@@ -71,13 +74,6 @@ try2attach(){
 	if [[ ! -z ${response} ]]; then
 		attach $1 ${response}
 	fi
-}
-
-set -e
-cd $CONFIG_DIR
-for i in *; do
-	echo Trying to attach host: $i
-	try2attach $i
 done
 
 exit 2
