@@ -65,14 +65,15 @@ for i in *; do
 	echo Trying to attach host: $i
 	number_of_sessions="$(list $i -F \'#{session_name}\' | wc -l)"
 	if [[ ${number_of_sessions} -eq 0 ]]; then
-		printf "Press any key to close this window." >&2
+		printf "Press any key to continue." >&2
 		read -r -p "" response
-	fi
-	echo These are the sessions active on this machine, choose the session you would like to attach
-	list $i -F \'id:\ \#\{session_id\}\ \|\ name:\ \#{session_name}\ \|\ windows:\ \#{session_windows}\ \|\ created:\ \#{t:session_created}\ \|\ last\ attached:\ \#{t:session_last_attached}\'
-	read -r -p "Session id/name: (Enter nothing to cancel) " response
-	if [[ ! -z ${response} ]]; then
-		attach $i ${response}
+	else
+		echo These are the sessions active on this machine, choose the session you would like to attach
+		list $i -F \'id:\ \#\{session_id\}\ \|\ name:\ \#{session_name}\ \|\ windows:\ \#{session_windows}\ \|\ created:\ \#{t:session_created}\ \|\ last\ attached:\ \#{t:session_last_attached}\'
+		read -r -p "Session id/name: (Enter nothing to skip/cancel) " response
+		if [[ ! -z ${response} ]]; then
+			attach $i ${response}
+		fi
 	fi
 done
 
