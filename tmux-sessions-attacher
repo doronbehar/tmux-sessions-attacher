@@ -1,50 +1,99 @@
-#!/bin/sh
+#!/bin/bash
 
 CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}"/tmux-sessions-attacher
 TMUX_BIN="${TMUX_BIN:-tmux}"
-SSH_BIN="${SSH_BIN:-ssh -t}"
+SSH_BIN="${SSH_BIN:-ssh}"
 IFS=$'\n'
 
-set -e
+list(){
+	if [[ "$1" == 'localhost' ]]; then
+		shift
+		if [[ -z ${TMUX_OPTIONS} ]]; then
+			${TMUX_BIN} list-sessions "$@"
+		else
+			${TMUX_BIN} ${TMUX_OPTIONS} list-sessions "$@"
+		fi
+	else
+		HOST=$1
+		shift
+		if [[ -z ${TMUX_OPTIONS} ]]; then
+			if [[ -z ${SSH_OPTIONS} ]]; then
+				${SSH_BIN} $HOST ${TMUX_BIN} list-sessions "$@"
+			else
+				${SSH_BIN} $HOST ${SSH_OPTIONS} ${TMUX_BIN} list-sessions "$@"
+			fi
+		else
+			if [[ -z ${SSH_OPTIONS} ]]; then
+				${SSH_BIN} $HOST ${TMUX_BIN} ${TMUX_OPTIONS} list-sessions "$@"
+			else
+				${SSH_BIN} $HOST ${SSH_OPTIONS} ${TMUX_BIN} ${TMUX_OPTIONS} list-sessions "$@"
+			fi
+		fi
+	fi
+}
+
+attach(){
+	if [[ "$1" == 'localhost' ]]; then
+		shift
+		if [[ -z ${TMUX_OPTIONS} ]]; then
+			${TMUX_BIN} attach-session -t "$@"
+		else
+			${TMUX_BIN} ${TMUX_OPTIONS} attach-session -t "$@"
+		fi
+	else
+		HOST=$1
+		shift
+		if [[ -z ${TMUX_OPTIONS} ]]; then
+			if [[ -z ${SSH_OPTIONS} ]]; then
+				${SSH_BIN} -t $HOST ${TMUX_BIN} attach-session -t "$@"
+			else
+				${SSH_BIN} -t $HOST ${SSH_OPTIONS} ${TMUX_BIN} attach-session -t "$@"
+			fi
+		else
+			if [[ -z ${SSH_OPTIONS} ]]; then
+				${SSH_BIN} -t $HOST ${TMUX_BIN} ${TMUX_OPTIONS} attach-session -t "$@"
+			else
+				${SSH_BIN} -t $HOST ${SSH_OPTIONS} ${TMUX_BIN} ${TMUX_OPTIONS} attach-session -t "$@"
+			fi
+		fi
+	fi
+}
 
 try2attach(){
-	if [[ "$1" == 'localhost' ]]; then
-		TMUX_CMD="${TMUX_BIN}"' '${TMUX_OPTIONS}
-	else
-		TMUX_CMD="${SSH_BIN}"' '${SSH_OPTIONS}' '$1' '${TMUX_BIN}' '${TMUX_OPTIONS}
-	fi
-	number_of_sessions="$(eval $TMUX_CMD list-sessions -F \'#{session_name}\' | wc -l)"
+	number_of_sessions="$(list $1 -F \'#{session_name}\' | wc -l)"
 	if [[ ${number_of_sessions} -eq 0 ]]; then
 		printf "Press any key to close this window." >&2
 		read -r -p "" response
 		exit 2
-	else
-		if [[ ${number_of_sessions} == 1 ]]; then
-			eval $TMUX_CMD attach-session -t "$(eval $TMUX_CMD list-sessions -F \'#{session_name}\')"
-			exit 0
-		fi
-		echo These are the sessions active on this machine, choose the session you would like to attach
-		eval $TMUX_CMD list-sessions -F \'id:\ \#{session_id} \|\ name:\ \#{session_name} \|\ windows:\ \#{session_windows} \|\ created:\ \#{t:session_created} \|\ last attached:\ \#{t:sessions_last_attached}\'
-		read -r -p "Session id/name: " response
-		eval $TMUX_CMD attach-session -t ${response}
-		exit 0
-		while [[ $? -eq 1 ]]; do
-			read -r -p "Would you like to choose another one? [y/N] " response
-			if [[ ${response} == [yY] ]]; then
-				read -r -p "Session id/name: " response
-				eval $TMUX_CMD attach-session -t ${response}
-				exit 0
-			else
-				exit 1
-			fi
-		done
 	fi
+	if [[ ${number_of_sessions} == 1 ]]; then
+		attach $1 "$(list $1 -F \'#{session_name}\')"
+		exit 0
+	fi
+	echo These are the sessions active on this machine, choose the session you would like to attach
+	list $1 -F \'id: \#\{session_id\} \| name: \#{session_name} \| windows: \#{session_windows} \| created: \#{t:session_created} \| last attached: \#{t:session_last_attached}\'
+	read -r -p "Session id/name: (Enter nothing to cancel) " response
+	if [[ -z ${response} ]]; then
+		exit 3
+	else
+		attach $1 ${response}
+	fi
+	exit 0
+	while [[ $? -eq 1 ]]; do
+		read -r -p "Would you like to choose another one? [y/N] " response
+		if [[ ${response} == [yY] ]]; then
+			read -r -p "Session id/name: " response
+			attach $1 ${response}
+			exit 0
+		else
+			exit 1
+		fi
+	done
 }
 
+set -e
 cd $CONFIG_DIR
-
-try2attach localhost
-
 for i in *; do
+	echo Trying to attach host: $i
 	try2attach $i
 done
