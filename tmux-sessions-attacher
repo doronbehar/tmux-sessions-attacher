@@ -69,7 +69,7 @@ for i in *; do
 		read -r -p "" response
 	fi
 	echo These are the sessions active on this machine, choose the session you would like to attach
-	list $1 -F \'id: \#\{session_id\} \| name: \#{session_name} \| windows: \#{session_windows} \| created: \#{t:session_created} \| last attached: \#{t:session_last_attached}\'
+	list $1 -F \'id:\ \#\{session_id\}\ \|\ name:\ \#{session_name}\ \|\ windows:\ \#{session_windows}\ \|\ created:\ \#{t:session_created}\ \|\ last\ attached:\ \#{t:session_last_attached}\'
 	read -r -p "Session id/name: (Enter nothing to cancel) " response
 	if [[ ! -z ${response} ]]; then
 		attach $1 ${response}
